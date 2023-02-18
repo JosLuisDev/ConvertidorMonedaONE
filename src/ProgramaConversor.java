@@ -6,6 +6,7 @@ public class ProgramaConversor {
     private static String [] opcionesTipoConversor = {"Conversor de monedas", "Otro conversor"};
     private static String opcion;
     private static int continuar = 0;
+    private static final ConversorDivisas CONVERSOR_DIVISAS = new ConversorDivisas();
     public static void correr(){
         double cantidadConvertir = 0;
         while (continuar ==0){ //Al dar en no o cancel se detiene el programa
@@ -24,15 +25,14 @@ public class ProgramaConversor {
     }
 
     private static String obtenerOpcionSeleccionada(){
-        return JOptionPane.showInputDialog(null,"Seleccione una opcion de conversion",
-                "Menu",JOptionPane.QUESTION_MESSAGE,null, opcionesTipoConversor, opcionesTipoConversor[0]).toString();
+        return (String) JOptionPane.showInputDialog(null,"Seleccione una opcion de conversion",
+                "Menu",JOptionPane.QUESTION_MESSAGE,null, opcionesTipoConversor, opcionesTipoConversor[0]);
     }
 
     private static void validarTipoConversor(double cantidadConvertir){
         switch (opcion){
             case "Conversor de monedas":
-                ConversorDivisas cd = new ConversorDivisas();
-                cd.convertirDivisas(cantidadConvertir);
+                CONVERSOR_DIVISAS.convertirDivisas(cantidadConvertir);
                 break;
             default:
                 JOptionPane.showMessageDialog(null,"Conversor no disponible por el momento");
