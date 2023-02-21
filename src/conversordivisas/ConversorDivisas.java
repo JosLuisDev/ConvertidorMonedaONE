@@ -1,14 +1,22 @@
 package conversordivisas;
 
 import util.Resultado;
+import util.TipoCambioDivisas;
 
 import javax.swing.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConversorDivisas {
 
-    private String [] opcionesConversion = {"Peso mexicano a dolar", "Peso mexicano a euro","Peso mexicano a libra",
-            "Dolar a peso mexicano", "Euro a peso mexicano","Libra a peso mexicano"};
+    private String [] opcionesConversion = {"Dolar a peso mexicano", "Dolar a euro","Dolar a libra",
+            "Peso mexicano a dolar", "Euro a dolar","Libra a dolar"};
     private final Divisa divisa = new Divisa();
+    private Map<String,Double> tipoCambioBaseDolar;
+
+    public ConversorDivisas() {
+        tipoCambioBaseDolar = TipoCambioDivisas.obtenerTipoCambioDivisas();
+    }
 
     public void convertirDivisas(double cantidadConvertir){
 
@@ -22,44 +30,33 @@ public class ConversorDivisas {
         //Mostrar modal con resultado de la conversion
         mostrarResultado(new Resultado(divisa.getNombre(), resultadoConversion));
     }
-
-    private double realizarOperacion(double cantidadConvertir){
-        return cantidadConvertir * divisa.getValor();
-    }
-
-    private void mostrarResultado(Resultado resultadoConversion){
-        //Mostrar el resultado de la conversion
-        JOptionPane.showMessageDialog(null,
-                "Tienes: " + resultadoConversion.getResultado() + " " + resultadoConversion.getDescripcion(),
-                "Conversion",JOptionPane.INFORMATION_MESSAGE);
-    }
-
     private double definirTipoConversion(String tipoConversion, double cantidadConvertir){
         double resultadoConversion;
         switch (tipoConversion){
-            case "Peso mexicano a dolar":
-                setearDivisa("Dolares",0.054);
-                resultadoConversion = realizarOperacion(cantidadConvertir);
-                break;
-            case "Peso mexicano a euro":
-                setearDivisa("Euros", 0.051);
-                resultadoConversion = realizarOperacion(cantidadConvertir);
-                break;
-            case "Peso mexicano a libra":
-                setearDivisa("Libras", 0.045);
-                resultadoConversion = realizarOperacion(cantidadConvertir);
-                break;
+//{"Dolar a peso mexicano", "Dolar a euro","Dolar a libra","Peso mexicano a dolar", "Euro a dolar","Libra a dolar"}
             case "Dolar a peso mexicano":
-                setearDivisa("Pesos mexicanos", 18.36);
-                resultadoConversion = realizarOperacion(cantidadConvertir);
+                setearDivisa("pesos mexicanos",tipoCambioBaseDolar.get("MXN"));
+                resultadoConversion = realizarOperacionDesdeDolar(cantidadConvertir);
                 break;
-            case "Euro a peso mexicano":
-                setearDivisa("Pesos mexicanos", 19.64);
-                resultadoConversion = realizarOperacion(cantidadConvertir);
+            case "Dolar a euro":
+                setearDivisa("Euros", tipoCambioBaseDolar.get("EUR"));
+                resultadoConversion = realizarOperacionDesdeDolar(cantidadConvertir);
                 break;
-            case "Libra a peso mexicano":
-                setearDivisa("Pesos mexicanos", 22.11);
-                resultadoConversion = realizarOperacion(cantidadConvertir);
+            case "Dolar a libra":
+                setearDivisa("Libras", tipoCambioBaseDolar.get("GBP"));
+                resultadoConversion = realizarOperacionDesdeDolar(cantidadConvertir);
+                break;
+            case "Peso mexicano a dolar":
+                setearDivisa("Dolares", tipoCambioBaseDolar.get("MXN"));
+                resultadoConversion = realizarOperacionDesdeOtraDivisa(cantidadConvertir);
+                break;
+            case "Euro a dolar":
+                setearDivisa("Dolares", tipoCambioBaseDolar.get("EUR"));
+                resultadoConversion = realizarOperacionDesdeOtraDivisa(cantidadConvertir);
+                break;
+            case "Libra a dolar":
+                setearDivisa("Dolares", tipoCambioBaseDolar.get("GBP"));
+                resultadoConversion = realizarOperacionDesdeOtraDivisa(cantidadConvertir);
                 break;
             default:
                 resultadoConversion=0;
@@ -67,8 +64,20 @@ public class ConversorDivisas {
         }
         return resultadoConversion;
     }
+    private void mostrarResultado(Resultado resultadoConversion){
+        //Mostrar el resultado de la conversion
+        JOptionPane.showMessageDialog(null,
+                "Tienes: " + resultadoConversion.getResultado() + " " + resultadoConversion.getDescripcion(),
+                "Conversion",JOptionPane.INFORMATION_MESSAGE);
+    }
     private void setearDivisa(String nombre, double valor){
         divisa.setNombre(nombre);
         divisa.setValor(valor);
+    }
+    private double realizarOperacionDesdeDolar(double cantidadConvertir){
+        return cantidadConvertir * divisa.getValor();
+    }
+    private double realizarOperacionDesdeOtraDivisa(double cantidadConvertir){
+        return cantidadConvertir / divisa.getValor();
     }
 }

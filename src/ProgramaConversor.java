@@ -18,15 +18,10 @@ public class ProgramaConversor {
                 cantidadConvertir = convertirStringCantidadDouble(cantidadConvertir);
             }
             validarTipoConversor(cantidadConvertir);
-            cantidadConvertir=0;//Reset cantidad para que la vuelva a solicitar
+            cantidadConvertir=0;//Reset de cantidad para que la vuelva a solicitar
             continuar = JOptionPane.showConfirmDialog(null, "Deseas continuar?");
         }
         JOptionPane.showMessageDialog(null, "Programa Terminado");
-    }
-
-    private static String obtenerOpcionSeleccionada(){
-        return (String) JOptionPane.showInputDialog(null,"Seleccione una opcion de conversion",
-                "Menu",JOptionPane.QUESTION_MESSAGE,null, opcionesTipoConversor, opcionesTipoConversor[0]);
     }
 
     private static void validarTipoConversor(double cantidadConvertir){
@@ -47,5 +42,10 @@ public class ProgramaConversor {
             JOptionPane.showMessageDialog(null,"Solo se pueden ingresar valores numericos","Error",JOptionPane.ERROR_MESSAGE);
         }
         return cantidadConvertir;
+    }
+
+    private static String obtenerOpcionSeleccionada(){
+        return (String) JOptionPane.showInputDialog(null,"Seleccione una opcion de conversion",
+                "Menu",JOptionPane.QUESTION_MESSAGE,null, opcionesTipoConversor, opcionesTipoConversor[0]);
     }
 }
