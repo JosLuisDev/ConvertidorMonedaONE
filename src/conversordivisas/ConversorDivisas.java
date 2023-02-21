@@ -4,80 +4,58 @@ import util.Resultado;
 import util.TipoCambioDivisas;
 
 import javax.swing.*;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ConversorDivisas {
 
-    private String [] opcionesConversion = {"Dolar a peso mexicano", "Dolar a euro","Dolar a libra",
-            "Peso mexicano a dolar", "Euro a dolar","Libra a dolar"};
-    private final Divisa divisa = new Divisa();
-    private Map<String,Double> tipoCambioBaseDolar;
+    private static final String[] OPCIONES_CONVERSION = {"Dolar a peso mexicano", "Dolar a euro", "Dolar a libra",
+            "Peso mexicano a dolar", "Euro a dolar", "Libra a dolar"};
+    private final Map<String, Double> tipoCambioBaseDolar;
 
     public ConversorDivisas() {
         tipoCambioBaseDolar = TipoCambioDivisas.obtenerTipoCambioDivisas();
     }
 
-    public void convertirDivisas(double cantidadConvertir){
-
-        //Pedir el tipo de conversion ej peso a dolar, dolar a peso, etc
-        String tipoConversion = (JOptionPane.showInputDialog(null,"Elige el tipo de conversion","Monedas", JOptionPane.QUESTION_MESSAGE,null,
-                opcionesConversion,opcionesConversion[0]).toString());
-
-        //Validar que operacion se realizara
-        double resultadoConversion = definirTipoConversion(tipoConversion,cantidadConvertir);
-
-        //Mostrar modal con resultado de la conversion
-        mostrarResultado(new Resultado(divisa.getNombre(), resultadoConversion));
+    public void convertirDivisas(double cantidadConvertir) {
+        String tipoConversion = obtenerTipoConversion();
+        double resultadoConversion = definirTipoConversion(tipoConversion, cantidadConvertir);
+        mostrarResultado(new Resultado(tipoConversion, resultadoConversion));
     }
-    private double definirTipoConversion(String tipoConversion, double cantidadConvertir){
-        double resultadoConversion;
-        switch (tipoConversion){
-//{"Dolar a peso mexicano", "Dolar a euro","Dolar a libra","Peso mexicano a dolar", "Euro a dolar","Libra a dolar"}
+
+    private String obtenerTipoConversion() {
+        return (String) JOptionPane.showInputDialog(null, "Elige el tipo de conversion", "Monedas",
+                JOptionPane.QUESTION_MESSAGE, null, OPCIONES_CONVERSION, OPCIONES_CONVERSION[0]);
+    }
+
+    private double definirTipoConversion(String tipoConversion, double cantidadConvertir) {
+        switch (tipoConversion) {
             case "Dolar a peso mexicano":
-                setearDivisa("pesos mexicanos",tipoCambioBaseDolar.get("MXN"));
-                resultadoConversion = realizarOperacionDesdeDolar(cantidadConvertir);
-                break;
+                return realizarOperacionDesdeDolar(cantidadConvertir, tipoCambioBaseDolar.get("MXN"));
             case "Dolar a euro":
-                setearDivisa("Euros", tipoCambioBaseDolar.get("EUR"));
-                resultadoConversion = realizarOperacionDesdeDolar(cantidadConvertir);
-                break;
+                return realizarOperacionDesdeDolar(cantidadConvertir, tipoCambioBaseDolar.get("EUR"));
             case "Dolar a libra":
-                setearDivisa("Libras", tipoCambioBaseDolar.get("GBP"));
-                resultadoConversion = realizarOperacionDesdeDolar(cantidadConvertir);
-                break;
+                return realizarOperacionDesdeDolar(cantidadConvertir, tipoCambioBaseDolar.get("GBP"));
             case "Peso mexicano a dolar":
-                setearDivisa("Dolares", tipoCambioBaseDolar.get("MXN"));
-                resultadoConversion = realizarOperacionDesdeOtraDivisa(cantidadConvertir);
-                break;
+                return realizarOperacionHaciaDolar(cantidadConvertir, tipoCambioBaseDolar.get("MXN"));
             case "Euro a dolar":
-                setearDivisa("Dolares", tipoCambioBaseDolar.get("EUR"));
-                resultadoConversion = realizarOperacionDesdeOtraDivisa(cantidadConvertir);
-                break;
+                return realizarOperacionHaciaDolar(cantidadConvertir, tipoCambioBaseDolar.get("EUR"));
             case "Libra a dolar":
-                setearDivisa("Dolares", tipoCambioBaseDolar.get("GBP"));
-                resultadoConversion = realizarOperacionDesdeOtraDivisa(cantidadConvertir);
-                break;
+                return realizarOperacionHaciaDolar(cantidadConvertir, tipoCambioBaseDolar.get("GBP"));
             default:
-                resultadoConversion=0;
-                break;
+                return 0;
         }
-        return resultadoConversion;
     }
-    private void mostrarResultado(Resultado resultadoConversion){
-        //Mostrar el resultado de la conversion
-        JOptionPane.showMessageDialog(null,
-                "Tienes: " + resultadoConversion.getResultado() + " " + resultadoConversion.getDescripcion(),
-                "Conversion",JOptionPane.INFORMATION_MESSAGE);
+
+    private double realizarOperacionDesdeDolar(double cantidadConvertir, double tipoCambio) {
+        return cantidadConvertir * tipoCambio;
     }
-    private void setearDivisa(String nombre, double valor){
-        divisa.setNombre(nombre);
-        divisa.setValor(valor);
+
+    private double realizarOperacionHaciaDolar(double cantidadConvertir, double tipoCambio) {
+        return cantidadConvertir / tipoCambio;
     }
-    private double realizarOperacionDesdeDolar(double cantidadConvertir){
-        return cantidadConvertir * divisa.getValor();
-    }
-    private double realizarOperacionDesdeOtraDivisa(double cantidadConvertir){
-        return cantidadConvertir / divisa.getValor();
+
+    private void mostrarResultado(Resultado resultadoConversion) {
+        JOptionPane.showMessageDialog(null, "Tienes: " + resultadoConversion.getResultado() + "\nConversion: " +
+                resultadoConversion.getDescripcion(), "Conversion", JOptionPane.INFORMATION_MESSAGE);
     }
 }
